@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+
 __authors__ = "Jared E. Stroud aka The Doc"
+
 '''
 The MIT License (MIT)
 
@@ -26,11 +28,7 @@ SOFTWARE.
 
 '''
 
-class TermColors:
-
-        red = "\033[91m" 
-        blue = "\033[94m"
-        green = "\033[92m"
+from utilities.colors import TermColors
 
 if __name__ == "__main__":
 
@@ -38,7 +36,7 @@ if __name__ == "__main__":
     while True:
 
         try:
-            x = raw_input(">> ")
+            cmd  = raw_input(">> ")
 
         except NameError as cerr:
             print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
