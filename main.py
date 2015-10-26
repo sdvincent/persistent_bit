@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+__authors__ = "Jared E. Stroud aka The Doc"
 '''
 The MIT License (MIT)
 
