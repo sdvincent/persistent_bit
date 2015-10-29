@@ -27,7 +27,9 @@ SOFTWARE.
 '''
 
 from utilities.colors import TermColors
+from utilities.commands import evalCmd
 
+evaluate = evalCmd()
 if __name__ == "__main__":
 
     print(TermColors.blue + "Goodbye World")
@@ -35,6 +37,7 @@ if __name__ == "__main__":
 
         try:
             cmd  = raw_input(">> ")
+            evaluate.cmdCheck(cmd)
 
         except NameError as cerr:
             print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
