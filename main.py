@@ -30,8 +30,9 @@ from utilities.colors import TermColors
 
 if __name__ == "__main__":
 
+    cmd = ""
     print(TermColors.blue + "Goodbye World")
-    while True:
+    while cmd !=  "exit" and cmd != "quit":
 
         try:
             cmd  = raw_input(">> ")
