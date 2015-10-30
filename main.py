@@ -69,7 +69,8 @@ def inputHandle(input):
     #Split line based on white spaces
     inputList = input.split(' ')
     
-    return inputList
+    #Uncomment when we figure out the part below
+    #return inputList
     
     #This part will go somewhere else but for testing just leaving it here
     cmd = inputList.pop(0)
