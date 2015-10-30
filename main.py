@@ -41,12 +41,18 @@ def menu():
     cmd = ""
 
     try:
+        #Changes color of output
         print(TermColors.blue)
+        
+        #takes in user input
         cmd  = raw_input(">> ").rstrip()
+        
+        #Verify command legit
         evaluate.cmdCheck(cmd)
         return cmd
 
     except NameError as cerr:
+        #Something went wrong (does not cause program to quit)
         print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
         print(TermColors.blue) # Go back to blue as default terminal color.
 
@@ -59,7 +65,10 @@ def inputHandle(input):
     Parameters: input - string that contains the users input from the main menu
     Return: Returns a list of arguments
     '''
+
+    #Split line based on white spaces
     inputList = input.split(' ')
+    
     return inputList
     
     #This part will go somewhere else but for testing just leaving it here
@@ -73,7 +82,7 @@ def inputHandle(input):
 
         if module == "persistence/ssh":
             #call the ssh shit
-
+            print "call this"
 
 
 def main():
