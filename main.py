@@ -30,16 +30,64 @@ from utilities.colors import TermColors
 from utilities.commands import evalCmd
 
 evaluate = evalCmd()
-if __name__ == "__main__":
 
+def menu():
+    '''
+    Name: menu
+    Description: Calls the Main Menu
+    Parameters: None
+    Returns: Users input as a string
+    '''
     cmd = ""
-    print(TermColors.blue + "Goodbye World")
-    while cmd !=  "exit" and cmd != "quit":
 
-        try:
-            cmd  = raw_input(">> ")
-            evaluate.cmdCheck(cmd)
+    try:
+        print(TermColors.blue)
+        cmd  = raw_input(">> ").rstrip()
+        evaluate.cmdCheck(cmd)
+        return cmd
 
-        except NameError as cerr:
-            print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
-            print(TermColors.blue) # Go back to blue as default terminal color.
+    except NameError as cerr:
+        print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
+        print(TermColors.blue) # Go back to blue as default terminal color.
+
+def inputHandle(input):
+    '''
+    Name: inputHandle
+    Description: Takes in the user input and splits it up to get the arguements.
+                 The first arg will be the command (use, help).
+                 The following args will be taken as a list. (Ex persistence/ssh)
+    Parameters: input - string that contains the users input from the main menu
+    Return: Returns a list of arguments
+    '''
+    inputList = input.split(' ')
+    return inputList
+    
+    #This part will go somewhere else but for testing just leaving it here
+    cmd = inputList.pop(0)
+    print("We want to use: " + cmd)
+
+    #Instead of using IFs and ELIFs we should use dicts. (This is what pythong typically uses instead of switch statements
+    if cmd == "use": #Would call the a use module (will build next)
+        #This would go in the use module
+        module = inputList.pop(0)
+
+        if module == "persistence/ssh":
+            #call the ssh shit
+
+
+
+def main():
+    '''
+    Main Function
+    '''
+    while True: 
+        input  = menu()
+        inputHandle(input)
+        if input == "exit" or input == "quit":
+            print(TermColors.blue + "Goodbye World")
+            exit()
+    
+if __name__ == "__main__":
+    main()
+
+   
