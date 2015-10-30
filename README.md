@@ -11,4 +11,16 @@ The hosts are currently specified in the env.hosts[] list and can be changed.
     * change fabric to be based on a file of addresses.
 * Flask for web server.
 
+* Once we're in
+    * sanitize logs of your presence 
+    * Backdoors (trixdoor)
 
+
+* Veil 
+* Have writing to file from user shell for config stuff
+
+
+### How we should implement commands
+use <module> 
+    * module would be the fabric ssh script (loading the module)
+    * set can be defining variables (set ip = $IpYouWant)
