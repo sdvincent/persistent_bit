@@ -28,8 +28,10 @@ SOFTWARE.
 
 from utilities.colors import TermColors
 from utilities.commands import evalCmd
+from persistence.modules import Modules
 
 evaluate = evalCmd()
+mod = Modules()
 
 def menu():
     '''
@@ -48,7 +50,7 @@ def menu():
         cmd  = raw_input(">> ").rstrip()
         
         #Verify command legit
-        evaluate.cmdCheck(cmd)
+        #evaluate.cmdCheck(cmd)
         return cmd
 
     except NameError as cerr:
@@ -65,25 +67,86 @@ def inputHandle(input):
     Parameters: input - string that contains the users input from the main menu
     Return: Returns a list of arguments
     '''
+    cmd = ""
+
+    #Create dictionary
+    options = { 'use':use, 'exploit':"Future use" }
 
     #Split line based on white spaces
     inputList = input.split(' ')
-    
+   
     #Uncomment when we figure out the part below
     #return inputList
     
     #This part will go somewhere else but for testing just leaving it here
     cmd = inputList.pop(0)
     print("We want to use: " + cmd)
+    
+    print options[cmd](inputList[0])
 
-    #Instead of using IFs and ELIFs we should use dicts. (This is what pythong typically uses instead of switch statements
-    if cmd == "use": #Would call the a use module (will build next)
-        #This would go in the use module
-        module = inputList.pop(0)
 
-        if module == "persistence/ssh":
-            #call the ssh shit
-            print "call this"
+def use(str):
+    '''
+    Name: use
+    Description: Contains dict that points the user to the correct module when the 'use' arg is used
+    Parameters: Second arg as a string (should this be a list? Will need to be if we allow more than one arg)
+    Return: None
+    '''
+    
+    print "in use"
+    
+    #Split string up until first slash to pull out 
+    try:
+        index = str.index('/')
+        package = str[0:index]
+        print("package: " + package)
+        modVar = str[index+1:]
+        print("module: " + modVar)
+
+    except:
+        print "Module not found. Type 'help' for more information."
+        main()
+    
+    #Dict for the possible modules we will have
+    packages = { 'persistence':module }
+
+    print packages[package](modVar)
+
+def module(str):
+    '''
+    Name: module
+    Description: Calls module (ie ssh)
+    Parameters: The module 
+    Return: None
+    '''
+    print "in module"
+
+    #Spliting for now incase we want to go deeper in the future. For now we only go as deep as package/module (persistence/ssh)
+    try:
+        index = str.index('/')
+        module = str[0:index]
+        print("package: " + package)
+        #As of right now, nothing goes 3 deep but future use idk
+        future = str[index+1:]
+        print("Future thing: " + future)
+
+    except ValueError:
+        #Comes in here if no slash is found meaning this is the module
+        module = str
+    except:
+        print "Module not found. Type 'help' for more information."
+        main()
+    
+    #Declare dictionary with all modules
+    modules = { 'ssh':ssh }
+
+    #Call module from dict
+    modules[module]()
+
+
+def ssh():
+    mod.ssh()
+    print "here"
 
 
 def main():
