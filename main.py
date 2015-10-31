@@ -50,7 +50,7 @@ def menu():
         cmd  = raw_input(">> ").rstrip()
         
         #Verify command legit
-        #evaluate.cmdCheck(cmd)
+        evaluate.cmdCheck(cmd)
         return cmd
 
     except NameError as cerr:
@@ -80,11 +80,9 @@ def inputHandle(userInput):
     
     #This part will go somewhere else but for testing just leaving it here
     cmd = inputList.pop(0)
-    print("We want to use: " + cmd)
+    print("Trying to use : " + str(cmd))
+
     
-    print options[cmd](inputList[0])
-
-
 def use(str):
     '''
     Name: use
@@ -92,9 +90,6 @@ def use(str):
     Parameters: Second arg as a string (should this be a list? Will need to be if we allow more than one arg)
     Return: None
     '''
-    
-    print "in use"
-    
     #Split string up until first slash to pull out 
     try:
         index = str.index('/')
@@ -104,13 +99,13 @@ def use(str):
         print("module: " + modVar)
 
     except:
-        print "Module not found. Type 'help' for more information."
+        print ("Module not found. Type 'help' for more information.")
         main()
     
     #Dict for the possible modules we will have
     packages = { 'persistence':module }
 
-    print packages[package](modVar)
+    print(packages[package](modVar))
 
 def module(str):
     '''
@@ -119,7 +114,6 @@ def module(str):
     Parameters: The module 
     Return: None
     '''
-    print "in module"
 
     #Spliting for now incase we want to go deeper in the future. For now we only go as deep as package/module (persistence/ssh)
     try:
@@ -134,7 +128,7 @@ def module(str):
         #Comes in here if no slash is found meaning this is the module
         module = str
     except:
-        print "Module not found. Type 'help' for more information."
+        print("Module not found. Type 'help' for more information.")
         main()
     
     #Declare dictionary with all modules
@@ -144,10 +138,14 @@ def module(str):
     modules[module]()
 
 
+'''
+    Name: ssh
+    Purpose: Calling the SSH module
+    Parameters: None.
+    Return: Nothing
+'''
 def ssh():
     mod.ssh()
-    print "here"
-
 
 def main():
     '''
@@ -162,5 +160,3 @@ def main():
     
 if __name__ == "__main__":
     main()
-
-   
