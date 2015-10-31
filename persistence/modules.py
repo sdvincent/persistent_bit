@@ -8,7 +8,7 @@
 
 class Modules:
 
-    def set(args):
+    def set(self, args):
         '''
         Name: set
         Description: This function (or method if we end up putting this in a class) will be called when the user calls persistence/ssh then wishes to set settings
@@ -37,14 +37,14 @@ class Modules:
             env.password = args[1]
             print("Password set to: " + env.password)
 
-    def who():
+    def who(self):
         run('whoami')
 
-    def uptime(): # Executes uptime on the remote machine
+    def uptime(self): # Executes uptime on the remote machine
         run('uptime')
 
 
-    def sshCommands(cmd):
+    def sshCommands(self, cmd):
         commands = { 
                 'set':set,
                 'who':who,
@@ -56,10 +56,10 @@ class Modules:
         commands[cmd]
         ssh("f")
 
-    def test():
+    def test(self):
         print "hope this works"
 
-    def ssh(f):
+    def ssh(self,f):
         '''
         I don't know how this is going to work yet but we will see
         For some reason, I don't pass any args when I call it 
@@ -77,11 +77,6 @@ class Modules:
         #Dictionary for possible commands user can do
         #Might put these somewhere else, but for now, they are here as well
         
-
-
-
-
-   
 
     #def main():
     #    try:
