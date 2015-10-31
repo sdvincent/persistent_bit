@@ -58,7 +58,7 @@ def menu():
         print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
         print(TermColors.blue) # Go back to blue as default terminal color.
 
-def inputHandle(input):
+def inputHandle(userInput):
     '''
     Name: inputHandle
     Description: Takes in the user input and splits it up to get the arguements.
@@ -73,7 +73,7 @@ def inputHandle(input):
     options = { 'use':use, 'exploit':"Future use" }
 
     #Split line based on white spaces
-    inputList = input.split(' ')
+    inputList = userInput.split(' ')
    
     #Uncomment when we figure out the part below
     #return inputList
@@ -154,9 +154,9 @@ def main():
     Main Function
     '''
     while True: 
-        input  = menu()
-        inputHandle(input)
-        if input == "exit" or input == "quit":
+        userInput = menu()
+        inputHandle(userInput)
+        if userInput == "exit" or userInput == "quit":
             print(TermColors.blue + "Goodbye World")
             exit()
     
