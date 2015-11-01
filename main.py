@@ -32,7 +32,7 @@ try:
     from utilities.commands import evalCmd
     from persistence.modules import Modules
 except ImportError as err:
-    print("Error, I'm missing: " str(err))
+    print("Error, I'm missing: " +  str(err))
     sys.exit()
 
 evaluate = evalCmd()
@@ -104,7 +104,7 @@ def use(str):
         print("module: " + modVar)
 
     except:
-        print ("Module not found. Type 'help' for more information.")
+        print("Module not found. Type 'help' for more information.")
         main()
     
     #Dict for the possible modules we will have
@@ -159,9 +159,6 @@ def main():
     while True: 
         userInput = menu()
         inputHandle(userInput)
-        if userInput == "exit" or userInput == "quit":
-            print(TermColors.blue + "Goodbye World")
-            exit()
     
 if __name__ == "__main__":
     main()
