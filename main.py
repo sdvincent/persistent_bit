@@ -26,9 +26,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-from utilities.colors import TermColors
-from utilities.commands import evalCmd
-from persistence.modules import Modules
+try:
+    import sys
+    from utilities.colors import TermColors
+    from utilities.commands import evalCmd
+    from persistence.modules import Modules
+except ImportError as err:
+    print("Error, I'm missing: " str(err))
+    sys.exit()
 
 evaluate = evalCmd()
 mod = Modules()
