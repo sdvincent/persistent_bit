@@ -8,6 +8,8 @@
 
 class Modules:
 
+    #import main
+
     def set(self, args):
         '''
         Name: set
@@ -15,11 +17,19 @@ class Modules:
         Parameters: It takes a list of arguements that we will sort here
         Returns: Not sure at the moment.
         '''
+        try:
+            from utilities.commands import evalCmd
+        except ImportError as err:
+            print("Error, cannot find package " + str(err))
+            sys.exit()
+        
+        env = evalCmd()
 
         #set target
         #Set's the remote host IP
         if args[0] == "target":
             i = 1
+            print "setting target"
             for i in args:
                 #This allows adding of multiple hosts
                 env.hosts.append(i)
@@ -37,6 +47,8 @@ class Modules:
             env.password = args[1]
             print("Password set to: " + env.password)
 
+        self.ssh()
+
     def who(self):
         run('whoami')
 
@@ -45,39 +57,44 @@ class Modules:
 
 
     def sshCommands(self, cmd):
+        args = cmd.split(' ')
+        cmd = args.pop(0)
+
         commands = { 
-                'set':set,
-                'who':who,
-                'uptime':uptime,
-                'exit':exit
+                'set':self.set,
+                'who':self.who,
+                'uptime':self.uptime,
+                'exit':self.exit
                 }
                      
         #Run the command
-        commands[cmd]
-        ssh("f")
+        try:
+            commands[cmd](args)
+        except KeyError:
+            print(cmd + " is not a valid command. Type 'help' for more information")
+            self.ssh()
 
-    def test(self):
-        print "hope this works"
-
-    def ssh(self,f):
+    def ssh(self):
         '''
         I don't know how this is going to work yet but we will see
         For some reason, I don't pass any args when I call it 
         '''
         print "Using SSH for persistence. For help type 'help.'"
 
-        self.test()
-        exit()
-        cmd  = raw_input(">> ").rstrip()
-        
-        print cmd
-        sshCommands(cmd)
-        print cmd
+        cmd  = raw_input("[ssh]>> ").rstrip()
+        self.sshCommands(cmd)
 
         #Dictionary for possible commands user can do
         #Might put these somewhere else, but for now, they are here as well
         
-
+    def exit(self, NULL):
+        #Return to main menu
+        return 0
+    
+    
+    
+    
+    
     #def main():
     #    try:
     #        import sys
