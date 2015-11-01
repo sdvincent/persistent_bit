@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__authors__ = "Jared E. Stroud aka The Doc"
+__authors__ = "Jared E. Stroud aka The Doc, Scott did some stuff too..."
 
 '''
 The MIT License (MIT)
@@ -67,10 +67,8 @@ def inputHandle(userInput):
     Parameters: input - string that contains the users input from the main menu
     Return: Returns a list of arguments
     '''
-    cmd = ""
-
     #Create dictionary
-    options = { 'use':use, 'exploit':"Future use" }
+    options = { 'exit':quit, 'use':use, 'exploit':"Future use" }
 
     #Split line based on white spaces
     inputList = userInput.split(' ')
@@ -80,8 +78,8 @@ def inputHandle(userInput):
     
     #This part will go somewhere else but for testing just leaving it here
     cmd = inputList.pop(0)
-    print("Trying to use : " + str(cmd))
-
+    
+    options[cmd](inputList)
     
 def use(str):
     '''
@@ -90,13 +88,13 @@ def use(str):
     Parameters: Second arg as a string (should this be a list? Will need to be if we allow more than one arg)
     Return: None
     '''
+    str = str[0]
+
     #Split string up until first slash to pull out 
     try:
         index = str.index('/')
         package = str[0:index]
-        print("package: " + package)
         modVar = str[index+1:]
-        print("module: " + modVar)
 
     except:
         print ("Module not found. Type 'help' for more information.")
@@ -104,8 +102,8 @@ def use(str):
     
     #Dict for the possible modules we will have
     packages = { 'persistence':module }
-
-    print(packages[package](modVar))
+    
+    packages[package](modVar)
 
 def module(str):
     '''
@@ -114,12 +112,11 @@ def module(str):
     Parameters: The module 
     Return: None
     '''
-
+    
     #Spliting for now incase we want to go deeper in the future. For now we only go as deep as package/module (persistence/ssh)
     try:
         index = str.index('/')
         module = str[0:index]
-        print("package: " + package)
         #As of right now, nothing goes 3 deep but future use idk
         future = str[index+1:]
         print("Future thing: " + future)
@@ -147,6 +144,10 @@ def module(str):
 def ssh():
     mod.ssh()
 
+def quit(NULL):
+    print(TermColors.blue + "Goodbye World")
+    exit()
+
 def main():
     '''
     Main Function
@@ -154,9 +155,6 @@ def main():
     while True: 
         userInput = menu()
         inputHandle(userInput)
-        if userInput == "exit" or userInput == "quit":
-            print(TermColors.blue + "Goodbye World")
-            exit()
     
 if __name__ == "__main__":
     main()
