@@ -23,7 +23,6 @@ class evalCmd:
     def cmdCheck(self, commandToEvaluate):
 
         if commandToEvaluate == "quit" or commandToEvaluate == "exit":
-            import sys
             sys.exit()
 
         elif commandToEvaluate == "help":
@@ -31,6 +30,5 @@ class evalCmd:
                     help: launch this program.
                     quit: exit the program.
                   """)
-        
         else:
             print("Invalid command. Try typing help")
