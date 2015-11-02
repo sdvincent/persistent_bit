@@ -35,7 +35,7 @@ except ImportError as err:
     print("[Error] Missing: " +  str(err))
     sys.exit()
 
-evaluate = evalCmd()
+log = evalCmd()
 mod = Modules()
 
 def menu():
@@ -87,7 +87,9 @@ def inputHandle(userInput):
         options[cmd](inputList)
     except Exception as err:
         print( TermColors.red + "[Error] " + str(err) + " does not exist.")
-
+        log.logging(str(err))
+    else:
+        log.logging(str(options[cmd](inputList)))
 
 def use(str):
     '''
