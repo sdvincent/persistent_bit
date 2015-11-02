@@ -86,7 +86,7 @@ def inputHandle(userInput):
         cmd = inputList.pop(0)
         options[cmd](inputList)
     except Exception as err:
-        print("[Error] " + str(err) + " does not exist.")
+        print( TermColors.red + "[Error] " + str(err) + " does not exist.")
 
 
 def use(str):
