@@ -26,11 +26,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-from utilities.colors import TermColors
-from utilities.commands import evalCmd
-from persistence.modules import Modules
+try:
+    import sys
+    from utilities.colors import TermColors
+    from utilities.commands import evalCmd
+    from persistence.modules import Modules
+except ImportError as err:
+    print("[Error] Missing: " +  str(err))
+    sys.exit()
 
-evaluate = evalCmd()
+log = evalCmd()
 mod = Modules()
 
 def menu():
@@ -77,9 +82,14 @@ def inputHandle(userInput):
     #return inputList
     
     #This part will go somewhere else but for testing just leaving it here
-    cmd = inputList.pop(0)
-
-    options[cmd](inputList)
+    try:
+        cmd = inputList.pop(0)
+        options[cmd](inputList)
+    except Exception as err:
+        print( TermColors.red + "[Error] " + str(err) + " does not exist.")
+        log.logging(str(err))
+    else:
+        log.logging(str(options[cmd](inputList)))
 
 def use(str):
     '''
@@ -97,7 +107,7 @@ def use(str):
         modVar = str[index+1:]
 
     except:
-        print "Module not found. Type 'help' for more information."
+        print("Module not found. Type 'help' for more information.")
         main()
     
     #Dict for the possible modules we will have
@@ -113,6 +123,7 @@ def module(str):
     Parameters: The module 
     Return: None
     '''
+
     #Spliting for now incase we want to go deeper in the future. For now we only go as deep as package/module (persistence/ssh)
     try:
         index = str.index('/')
@@ -125,7 +136,7 @@ def module(str):
         #Comes in here if no slash is found meaning this is the module
         module = str
     except:
-        print "Module not found. Type 'help' for more information."
+        print("Module not found. Type 'help' for more information.")
         main()
     
     #Declare dictionary with all modules
@@ -135,6 +146,12 @@ def module(str):
     modules[module]()
 
 
+'''
+    Name: ssh
+    Purpose: Calling the SSH module
+    Parameters: None.
+    Return: Nothing
+'''
 def ssh():
     mod.ssh()
 
@@ -152,5 +169,3 @@ def main():
     
 if __name__ == "__main__":
     main()
-
-   
