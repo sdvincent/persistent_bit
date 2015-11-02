@@ -32,7 +32,7 @@ try:
     from utilities.commands import evalCmd
     from persistence.modules import Modules
 except ImportError as err:
-    print("Error, I'm missing: " +  str(err))
+    print("[Error] Missing: " +  str(err))
     sys.exit()
 
 evaluate = evalCmd()
@@ -55,7 +55,7 @@ def menu():
         cmd  = raw_input(">> ").rstrip()
         
         #Verify command legit
-        evaluate.cmdCheck(cmd)
+        #evaluate.cmdCheck(cmd)
         return cmd
 
     except NameError as cerr:
@@ -82,10 +82,13 @@ def inputHandle(userInput):
     #return inputList
     
     #This part will go somewhere else but for testing just leaving it here
-    cmd = inputList.pop(0)
-    options[cmd](inputList)
+    try:
+        cmd = inputList.pop(0)
+        options[cmd](inputList)
+    except Exception as err:
+        print("[Error] " + str(err) + " does not exist.")
 
-    
+
 def use(str):
     '''
     Name: use
