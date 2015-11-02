@@ -7,7 +7,7 @@ try:
     import logging
 except ImportError as err:
     print("Error, cannot find package " + str(err))
-    sys.exit()
+    sys.exit() #if sys can't be imported, how can you call sys?
 
 
 class evalCmd:
