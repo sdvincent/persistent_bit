@@ -64,7 +64,7 @@ class Modules:
                 'set':self.set,
                 'who':self.who,
                 'uptime':self.uptime,
-                'exit':self.exit
+                'exit':self.quit
                 }
                      
         #Run the command
@@ -77,53 +77,14 @@ class Modules:
     def ssh(self):
         '''
         I don't know how this is going to work yet but we will see
-        For some reason, I don't pass any args when I call it 
         '''
         print "Using SSH for persistence. For help type 'help.'"
 
         cmd  = raw_input("[ssh]>> ").rstrip()
         self.sshCommands(cmd)
 
-        #Dictionary for possible commands user can do
-        #Might put these somewhere else, but for now, they are here as well
-        
-    def exit(self, NULL):
+    def quit(self, NULL):
         #Return to main menu
         return 0
     
     
-    
-    
-    
-    #def main():
-    #    try:
-    #        import sys
-    #        from fabric.api import *
-    #    except ImportError as err:
-    #        print("[Error] I don't have " + str(err))
-    #        sys.exit()   
-        
-        
-    #    cmd  = raw_input(">> ").rstrip()
-    #    evaluate.cmdCheck(cmd)
-    #    cmdList = cmd.split(' ')
-
-     #   if cmdList[0] == "set":
-     #       set()
-
-    #Thinking of doing a dict for this as well. Gotta ponder on it a bit more.
-    
-
-
-
-'''
-# Specify hosts here
-env.hosts = [
-    "172.16.117.164"
-]
-
-#Specify credentials. I believe this can be a list.
-env.user = 'root'
-env.password = 'Password*'
-'''
-
