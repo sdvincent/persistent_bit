@@ -8,7 +8,11 @@
 
 class Modules:
 
-    #import main
+    try:
+        import json
+    except ImportError as err:
+        print("Error, cannot find package " + str(err))
+        exit()
 
     def set(self, args):
         '''
@@ -19,16 +23,30 @@ class Modules:
         '''
         try:
             from utilities.commands import evalCmd
+            import json
         except ImportError as err:
             print("Error, cannot find package " + str(err))
-            sys.exit()
+            return 0
         
         env = evalCmd()
 
+        
+        list = [ "a", 'b', 'c']
+        with open('etc/ssh.conf').read() as f:
+           # json.dump({'passwords' : list}, f)
+            data = json.load(f)
+        
+
+        print data["passwords"]
+
+        exit()
+        
         #set target
         #Set's the remote host IP
         if args[0] == "target":
             i = 1
+            
+            
             print "setting target"
             for i in args:
                 #This allows adding of multiple hosts
@@ -71,7 +89,7 @@ class Modules:
         try:
             commands[cmd](args)
         except KeyError:
-            print(cmd + " is not a valid command. Type 'help' for more information")
+            print("[Error]" + cmd + " is not a valid command. Type 'help' for more information")
             self.ssh()
 
     def ssh(self):
