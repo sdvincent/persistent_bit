@@ -40,6 +40,11 @@ class Modules:
         #set target
         #Set's the remote host IP
         if cmd  == "target":
+            if len(args) == 0:
+                print( "Current targets:/n/t")
+                print( data["targets"])
+                self.ssh()
+
             print("Setting targets...")
             data['targets'] = args
             #This can probably go into a method but for now w/e
@@ -75,13 +80,46 @@ class Modules:
         #Return to ssh prompt
         self.ssh()
 
+    def check(self, val):
+        #Will be used to see what is in config file
+        import json
+
+        f = open('etc/ssh.conf', 'r')
+        data = json.load(f)
+        f.close
+        if val[0] == "target" or val[0] == "targets":
+            print("Tagets loaded:")
+            for i in  data["targets"]:
+                print("\t" + i)
+        
+        if val[0] == "user" or val[0] == "users":
+            print("Usersnames loaded:")
+            for i in  data["users"]:
+                print("\t" + i)
+
+        if val[0] == "password" or val[0] == "passwords":
+            print("Passwords loaded:")
+            for i in  data["passwords"]:
+                print("\t" + i)
+
+        self.ssh()
+
+    '''
+    SSH COMMANDS
+    '''
+    
     def who(self):
         run('whoami')
 
     def uptime(self): # Executes uptime on the remote machine
         run('uptime')
+    
+    
+    '''
+    END SSH COMMANDS
+    '''
 
-
+    
     def sshCommands(self, cmd):
         args = cmd.split(' ')
         cmd = args.pop(0)
@@ -90,6 +128,7 @@ class Modules:
                 'set':self.set,
                 'who':self.who,
                 'uptime':self.uptime,
+                'check':self.check,
                 'exit':self.quit
                 }
                      
