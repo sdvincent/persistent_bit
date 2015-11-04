@@ -163,12 +163,6 @@ def main():
     '''
     Main Function
     '''
-    import json
-    with open('etc/ssh.conf') as f:  
-        data = json.load(f)
-    
-    print data
-    exit()
     while True: 
         userInput = menu()
         inputHandle(userInput)

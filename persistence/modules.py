@@ -28,43 +28,51 @@ class Modules:
             print("Error, cannot find package " + str(err))
             return 0
         
-        env = evalCmd()
 
         
-        list = [ "a", 'b', 'c']
-        with open('etc/ssh.conf').read() as f:
-           # json.dump({'passwords' : list}, f)
-            data = json.load(f)
+        cmd = args.pop(0)
         
+        #Open ssh config file for writing
+        f = open('etc/ssh.conf', 'r')
+        data = json.load(f)
+        f.close
 
-        print data["passwords"]
-
-        exit()
-        
         #set target
         #Set's the remote host IP
-        if args[0] == "target":
-            i = 1
-            
-            
-            print "setting target"
+        if cmd  == "target":
+            print("Setting targets...")
+            data['targets'] = args
+            #This can probably go into a method but for now w/e
+            f = open('etc/ssh.conf', 'w')  
+            json.dump(data, f) 
+            f.close()
             for i in args:
-                #This allows adding of multiple hosts
-                env.hosts.append(i)
-                print("Target has been set to: " + env.hosts[i])
-
+                print( i + " has been set as a target")
+        
         #set user
         #Specificy user that you will log in as
-        if args[0] == "user":
-            env.user = args[1]
-            print("User set to: " + env.user)
+        if cmd  == "user":
+            print("Setting users...")
+            data['users'] = args
+            f = open('etc/ssh.conf', 'w')  
+            json.dump(data, f) 
+            f.close()
+            for i in args:
+                print( i + " has been set as a user")
 
         #set password
         #Allows user to set the password
-        if args[0] == "password":
-            env.password = args[1]
-            print("Password set to: " + env.password)
+        if cmd  == "password":
+            print("Setting password...")
+            data['passwords'] = args
+            f = open('etc/ssh.conf', 'w')  
+            json.dump(data, f) 
+            f.close()
+            for i in args:
+                print( i + " has been set as a password")
 
+
+        #Return to ssh prompt
         self.ssh()
 
     def who(self):
@@ -96,7 +104,7 @@ class Modules:
         '''
         I don't know how this is going to work yet but we will see
         '''
-        print "Using SSH for persistence. For help type 'help.'"
+        print( "Using SSH for persistence. For help type 'help.'")
 
         cmd  = raw_input("[ssh]>> ").rstrip()
         self.sshCommands(cmd)
