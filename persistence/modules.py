@@ -23,6 +23,7 @@ class Modules:
         '''
         try:
             from utilities.commands import evalCmd
+            from utilities.colors import TermColors
             import json
         except ImportError as err:
             print("Error, cannot find package " + str(err))
@@ -40,10 +41,6 @@ class Modules:
         #set target
         #Set's the remote host IP
         if cmd  == "target":
-            if len(args) == 0:
-                print( "Current targets:/n/t")
-                print( data["targets"])
-                self.ssh()
 
             print("Setting targets...")
             data['targets'] = args
@@ -51,8 +48,10 @@ class Modules:
             f = open('etc/ssh.conf', 'w')  
             json.dump(data, f) 
             f.close()
+            print(TermColors.green)
             for i in args:
                 print( i + " has been set as a target")
+            print(TermColors.blue)
         
         #set user
         #Specificy user that you will log in as
@@ -62,8 +61,10 @@ class Modules:
             f = open('etc/ssh.conf', 'w')  
             json.dump(data, f) 
             f.close()
+            print(TermColors.green)
             for i in args:
                 print( i + " has been set as a user")
+            print(TermColors.blue)
 
         #set password
         #Allows user to set the password
@@ -73,9 +74,10 @@ class Modules:
             f = open('etc/ssh.conf', 'w')  
             json.dump(data, f) 
             f.close()
+            print(TermColors.green)
             for i in args:
                 print( i + " has been set as a password")
-
+            print(TermColors.blue)
 
         #Return to ssh prompt
         self.ssh()
@@ -104,31 +106,79 @@ class Modules:
 
         self.ssh()
 
-    '''
-    SSH COMMANDS
-    '''
-    
-    def who(self):
-        run('whoami')
+    def connect(self, NULL):
+        '''
+        Name: connect
+        Description: This creates and maintains ssh connection with the use of paramiko, a python module for SSH. For more information on paramiko, check out: http://www.paramiko.org/index.html.
+        All commands will be executed from this method. User may exit this method and return to ssh method by typing "exit"
+        Parameters: None
+        Returns: None
+        '''
+        
+        try:
+            import json
+            import paramiko
+            from utilities.colors import TermColors
+        except ImportError as err:
+            print("Error, cannot find package " + str(err))
+            self.ssh()
 
-    def uptime(self): # Executes uptime on the remote machine
-        run('uptime')
-    
-    
-    '''
-    END SSH COMMANDS
-    '''
+        #Read in our targets and place into list
+        f = open('etc/ssh.conf','r')
+        data = json.load(f)
+        f.close()
 
-    
+        #Set values
+        targets = data["targets"]
+        users = data["users"]
+        passwords = data["passwords"]
+
+        #Create paramiko object
+        ssh = paramiko.SSHClient()
+
+        #Allow hosts automatically without manually saying 'yes'
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        #Connect to hosts
+        #How this is done right now is temporary. We will have to put this in a for loop for multiple hosts.
+        #Should also put in a try/except for succes easy success messages
+        try:
+            ssh.connect(targets[0], username=users[0],password=passwords[0])
+            print(TermColors.green + "Success connection established on: " + targets[0] + ". Happy hunting!") 
+            print(TermColors.blue)
+
+            input = ""
+            while True:
+                input = raw_input("["+TermColors.cyan+"ssh"+TermColors.blue+"]>> ").rstrip()
+                if input == "exit":
+                    #Maybe try a break instead so we can return 0 (good practice?)
+                    ssh.close()
+                    self.ssh()
+                
+                #These next couple lines combine the stdout and stderr and places in correct order
+                tran = ssh.get_transport()
+                chan = tran.open_session()
+                chan.get_pty()
+                f = chan.makefile()
+                chan.exec_command(input)
+                print(TermColors.white)
+                print f.read(), #Cannot put into print function b/c output was weird. Will look into later
+                print(TermColors.blue)
+
+        except Exception, e:
+            print(TermColors.red)
+            print("[Error] " + str(e))
+            print(TermColors.blue)
+
+
     def sshCommands(self, cmd):
         args = cmd.split(' ')
         cmd = args.pop(0)
 
         commands = { 
                 'set':self.set,
-                'who':self.who,
-                'uptime':self.uptime,
                 'check':self.check,
+                'charge!':self.connect,
                 'exit':self.quit
                 }
                      
@@ -143,6 +193,7 @@ class Modules:
         '''
         I don't know how this is going to work yet but we will see
         '''
+
         print( "Using SSH for persistence. For help type 'help.'")
 
         cmd  = raw_input("[ssh]>> ").rstrip()
