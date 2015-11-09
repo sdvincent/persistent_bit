@@ -26,11 +26,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-from utilities.colors import TermColors
-from utilities.commands import evalCmd
-from persistence.modules import Modules
+try:
+    import sys
+    from utilities.colors import TermColors
+    from utilities.commands import evalCmd
+    from persistence.modules import Modules
+except ImportError as err:
+    print("[Error] Missing: " +  str(err))
+    sys.exit()
 
-evaluate = evalCmd()
+log = evalCmd()
 mod = Modules()
 
 def menu():
@@ -50,7 +55,7 @@ def menu():
         cmd  = raw_input(">> ").rstrip()
         
         #Verify command legit
-        evaluate.cmdCheck(cmd)
+        #evaluate.cmdCheck(cmd)
         return cmd
 
     except NameError as cerr:
@@ -81,6 +86,15 @@ def inputHandle(userInput):
     
     options[cmd](inputList)
     
+    try:
+        cmd = inputList.pop(0)
+        options[cmd](inputList)
+    except Exception as err:
+        print( TermColors.red + "[Error] " + str(err) + " does not exist.")
+        log.logging(str(err))
+    else:
+        log.logging(str(options[cmd](inputList)))
+
 def use(str):
     '''
     Name: use
@@ -97,7 +111,7 @@ def use(str):
         modVar = str[index+1:]
 
     except:
-        print ("Module not found. Type 'help' for more information.")
+        print("Module not found. Type 'help' for more information.")
         main()
     
     #Dict for the possible modules we will have
@@ -112,7 +126,7 @@ def module(str):
     Parameters: The module 
     Return: None
     '''
-    
+
     #Spliting for now incase we want to go deeper in the future. For now we only go as deep as package/module (persistence/ssh)
     try:
         index = str.index('/')

@@ -8,6 +8,12 @@
 
 class Modules:
 
+    try:
+        import json
+    except ImportError as err:
+        print("Error, cannot find package " + str(err))
+        exit()
+
     def set(self, args):
         '''
         Name: set
@@ -17,41 +23,152 @@ class Modules:
         '''
         try:
             from utilities.commands import evalCmd
+            from utilities.colors import TermColors
+            import json
         except ImportError as err:
             print("Error, cannot find package " + str(err))
-            sys.exit()
+            return 0
         
-        env = evalCmd()
+
+        
+        cmd = args.pop(0)
+        
+        #Open ssh config file for writing
+        f = open('etc/ssh.conf', 'r')
+        data = json.load(f)
+        f.close
 
         #set target
         #Set's the remote host IP
-        if args[0] == "target":
-            i = 1
-            print "setting target"
-            for i in args:
-                #This allows adding of multiple hosts
-                env.hosts.append(i)
-                print("Target has been set to: " + env.hosts[i])
+        if cmd  == "target":
 
+            print("Setting targets...")
+            data['targets'] = args
+            #This can probably go into a method but for now w/e
+            f = open('etc/ssh.conf', 'w')  
+            json.dump(data, f) 
+            f.close()
+            print(TermColors.green)
+            for i in args:
+                print( i + " has been set as a target")
+            print(TermColors.blue)
+        
         #set user
         #Specificy user that you will log in as
-        if args[0] == "user":
-            env.user = args[1]
-            print("User set to: " + env.user)
+        if cmd  == "user":
+            print("Setting users...")
+            data['users'] = args
+            f = open('etc/ssh.conf', 'w')  
+            json.dump(data, f) 
+            f.close()
+            print(TermColors.green)
+            for i in args:
+                print( i + " has been set as a user")
+            print(TermColors.blue)
 
         #set password
         #Allows user to set the password
-        if args[0] == "password":
-            env.password = args[1]
-            print("Password set to: " + env.password)
+        if cmd  == "password":
+            print("Setting password...")
+            data['passwords'] = args
+            f = open('etc/ssh.conf', 'w')  
+            json.dump(data, f) 
+            f.close()
+            print(TermColors.green)
+            for i in args:
+                print( i + " has been set as a password")
+            print(TermColors.blue)
+
+        #Return to ssh prompt
+        self.ssh()
+
+    def check(self, val):
+        #Will be used to see what is in config file
+        import json
+
+        f = open('etc/ssh.conf', 'r')
+        data = json.load(f)
+        f.close
+        if val[0] == "target" or val[0] == "targets":
+            print("Tagets loaded:")
+            for i in  data["targets"]:
+                print("\t" + i)
+        
+        if val[0] == "user" or val[0] == "users":
+            print("Usersnames loaded:")
+            for i in  data["users"]:
+                print("\t" + i)
+
+        if val[0] == "password" or val[0] == "passwords":
+            print("Passwords loaded:")
+            for i in  data["passwords"]:
+                print("\t" + i)
 
         self.ssh()
 
-    def who(self):
-        run('whoami')
+    def connect(self, NULL):
+        '''
+        Name: connect
+        Description: This creates and maintains ssh connection with the use of paramiko, a python module for SSH. For more information on paramiko, check out: http://www.paramiko.org/index.html.
+        All commands will be executed from this method. User may exit this method and return to ssh method by typing "exit"
+        Parameters: None
+        Returns: None
+        '''
+        
+        try:
+            import json
+            import paramiko
+            from utilities.colors import TermColors
+        except ImportError as err:
+            print("Error, cannot find package " + str(err))
+            self.ssh()
 
-    def uptime(self): # Executes uptime on the remote machine
-        run('uptime')
+        #Read in our targets and place into list
+        f = open('etc/ssh.conf','r')
+        data = json.load(f)
+        f.close()
+
+        #Set values
+        targets = data["targets"]
+        users = data["users"]
+        passwords = data["passwords"]
+
+        #Create paramiko object
+        ssh = paramiko.SSHClient()
+
+        #Allow hosts automatically without manually saying 'yes'
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        #Connect to hosts
+        #How this is done right now is temporary. We will have to put this in a for loop for multiple hosts.
+        #Should also put in a try/except for succes easy success messages
+        try:
+            ssh.connect(targets[0], username=users[0],password=passwords[0])
+            print(TermColors.green + "Success connection established on: " + targets[0] + ". Happy hunting!") 
+            print(TermColors.blue)
+
+            input = ""
+            while True:
+                input = raw_input("["+TermColors.cyan+"ssh"+TermColors.blue+"]>> ").rstrip()
+                if input == "exit":
+                    #Maybe try a break instead so we can return 0 (good practice?)
+                    ssh.close()
+                    self.ssh()
+                
+                #These next couple lines combine the stdout and stderr and places in correct order
+                tran = ssh.get_transport()
+                chan = tran.open_session()
+                chan.get_pty()
+                f = chan.makefile()
+                chan.exec_command(input)
+                print(TermColors.white)
+                print f.read(), #Cannot put into print function b/c output was weird. Will look into later
+                print(TermColors.blue)
+
+        except Exception, e:
+            print(TermColors.red)
+            print("[Error] " + str(e))
+            print(TermColors.blue)
 
 
     def sshCommands(self, cmd):
@@ -60,68 +177,30 @@ class Modules:
 
         commands = { 
                 'set':self.set,
-                'who':self.who,
-                'uptime':self.uptime,
-                'exit':self.exit
+                'check':self.check,
+                'charge!':self.connect,
+                'exit':self.quit
                 }
                      
         #Run the command
         try:
             commands[cmd](args)
         except KeyError:
-            print(cmd + " is not a valid command. Type 'help' for more information")
+            print("[Error]" + cmd + " is not a valid command. Type 'help' for more information")
             self.ssh()
 
     def ssh(self):
         '''
         I don't know how this is going to work yet but we will see
-        For some reason, I don't pass any args when I call it 
         '''
-        print "Using SSH for persistence. For help type 'help.'"
+
+        print( "Using SSH for persistence. For help type 'help.'")
 
         cmd  = raw_input("[ssh]>> ").rstrip()
         self.sshCommands(cmd)
 
-        #Dictionary for possible commands user can do
-        #Might put these somewhere else, but for now, they are here as well
-        
-    def exit(self, NULL):
+    def quit(self, NULL):
         #Return to main menu
         return 0
     
     
-    
-    
-    
-    #def main():
-    #    try:
-    #        import sys
-    #        from fabric.api import *
-    #    except ImportError as err:
-    #        print("[Error] I don't have " + str(err))
-    #        sys.exit()   
-        
-        
-    #    cmd  = raw_input(">> ").rstrip()
-    #    evaluate.cmdCheck(cmd)
-    #    cmdList = cmd.split(' ')
-
-     #   if cmdList[0] == "set":
-     #       set()
-
-    #Thinking of doing a dict for this as well. Gotta ponder on it a bit more.
-    
-
-
-
-'''
-# Specify hosts here
-env.hosts = [
-    "172.16.117.164"
-]
-
-#Specify credentials. I believe this can be a list.
-env.user = 'root'
-env.password = 'Password*'
-'''
-
