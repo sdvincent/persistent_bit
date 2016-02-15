@@ -29,39 +29,16 @@ SOFTWARE.
 try:
     import sys
     from utilities.colors import TermColors
-    from utilities.commands import evalCmd
+    from utilities.logger import logger
+    from utilities.test import Menu
     from persistence.modules import Modules
 except ImportError as err:
     print("[Error] Missing: " +  str(err))
     sys.exit()
 
-log = evalCmd()
-mod = Modules()
-
-def menu():
-    '''
-    Name: menu
-    Description: Calls the Main Menu
-    Parameters: None
-    Returns: Users input as a string
-    '''
-    cmd = ""
-
-    try:
-        #Changes color of output
-        print(TermColors.blue)
-        
-        #takes in user input
-        cmd  = raw_input(">> ").rstrip()
-        
-        #Verify command legit
-        #evaluate.cmdCheck(cmd)
-        return cmd
-
-    except NameError as cerr:
-        #Something went wrong (does not cause program to quit)
-        print(TermColors.red + "Sorry, I didn't understand " + str(cerr))
-        print(TermColors.blue) # Go back to blue as default terminal color.
+print menu()
+exit()
+log = logger()
 
 def inputHandle(userInput):
     '''
@@ -91,9 +68,9 @@ def inputHandle(userInput):
         options[cmd](inputList)
     except Exception as err:
         print( TermColors.red + "[Error] " + str(err) + " does not exist.")
-        log.logging(str(err))
+        log.log("Command not recognized. (" + str(err) + ")", "warn")
     else:
-        log.logging(str(options[cmd](inputList)))
+        log.log(str(options[cmd](inputList)))
 
 def use(str):
     '''
@@ -159,16 +136,25 @@ def ssh():
     mod.ssh()
 
 def quit(NULL):
+    log.log("Session ending.", "info")
     print(TermColors.blue + "Goodbye World")
-    exit()
+    sys.exit()
 
 def main():
     '''
     Main Function
     '''
-    while True: 
-        userInput = menu()
-        inputHandle(userInput)
+    log.log("Session starting.", "info")
+    
+    mainMenu = menu()
+
+    while True:
+
+        mainMenu.main()
+        log.log("Session ending.", "info")
+        #sys.exit()
+        #userInput = menu()
+        #inputHandle(userInput)
     
 if __name__ == "__main__":
     main()
